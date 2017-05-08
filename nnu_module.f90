@@ -3,18 +3,26 @@ MODULE nnu_module
 
   INTEGER, PARAMETER :: max_nnnu = 3307
   INTEGER            :: nnnu
-  LOGICAL            :: nnu_flag = .true.
+  LOGICAL            :: netneutr_flag = .true.
 
   INTEGER            :: inuc_nnu(2,max_nnnu)
   CHARACTER(LEN=5)   :: nname_nnu(2,max_nnnu)
   CHARACTER(LEN=4)   :: desc_nnu(max_nnnu)
   REAL(8)            :: q_nnu(max_nnnu)
 
+  CHARACTER(LEN=256) :: netneutr_data_dir  = './neutrino_data'
+
   INTEGER            :: lun_netneutr_in
-  CHARACTER(LEN=13)  :: netneutr_in_fname  = 'neutrino.data'
+  CHARACTER(LEN=256) :: netneutr_in_fname  = 'neutrino.data'
 
   INTEGER            :: lun_netneutr_out
-  CHARACTER(LEN=8)   :: netneutr_out_fname = 'netneutr'
+  CHARACTER(LEN=256) :: netneutr_out_fname = 'netneutr'
+
+  namelist /nnu_input/ &
+    netneutr_flag, &
+    netneutr_data_dir, &
+    netneutr_in_fname, &
+    netneutr_out_fname
 
   CONTAINS
 
@@ -100,7 +108,7 @@ MODULE nnu_module
     LOGICAL :: keep_rate
 
     nnnu = 0
-    IF ( .not. nnu_flag ) RETURN
+    IF ( .not. netneutr_flag ) RETURN
 
     q_nnu = 0.0d0
 

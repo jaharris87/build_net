@@ -4,19 +4,27 @@ MODULE net_module
   INTEGER, PARAMETER :: max_nnet = 7855
   INTEGER            :: nnet
 
-  CHARACTER(LEN=5)  :: nname_net(max_nnet)
+  CHARACTER(LEN=5)   :: nname_net(max_nnet)
 
-  INTEGER           :: lun_sunet
-  CHARACTER(LEN=5)  :: sunet_fname        = 'sunet'
+  INTEGER            :: lun_sunet
+  CHARACTER(LEN=5)   :: sunet_fname        = 'sunet'
 
-  INTEGER           :: lun_netsu_in
-! CHARACTER(LEN=15) :: netsu_in_fname     = 'reaclib_JINAv21'
-  CHARACTER(LEN=15) :: netsu_in_fname     = 'reaclib_JINAv20'
-! CHARACTER(LEN=15) :: netsu_in_fname     = 'reaclib_JINAv11'
-! CHARACTER(LEN=15) :: netsu_in_fname     = 'reaclib_JINAv05'
+  CHARACTER(LEN=256) :: netsu_data_dir     = './reaclib_data'
 
-  INTEGER           :: lun_netsu_out
-  CHARACTER(LEN=5)  :: netsu_out_fname    = 'netsu'
+  INTEGER            :: lun_netsu_in
+! CHARACTER(LEN=256) :: netsu_in_fname     = 'reaclib_JINAv21'
+! CHARACTER(LEN=256) :: netsu_in_fname     = 'reaclib_jonas'
+! CHARACTER(LEN=256) :: netsu_in_fname     = 'reaclib_JINAv11'
+  CHARACTER(LEN=256) :: netsu_in_fname     = 'reaclib_JINAv05'
+
+  INTEGER            :: lun_netsu_out
+  CHARACTER(LEN=5)   :: netsu_out_fname    = 'netsu'
+
+  namelist /net_input/ &
+    sunet_fname, &
+    netsu_data_dir, &
+    netsu_in_fname, &
+    netsu_out_fname
 
   CONTAINS
 

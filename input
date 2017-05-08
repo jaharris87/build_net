@@ -1,5 +1,0 @@
-1       # Replace REACLIB rates with tabulated EC/PC rates? (no=0,yes=1)
-0       # Include neutrino capture rates? (no=0,yes=1)
-
-## Path for new network files directory:
-./new_data

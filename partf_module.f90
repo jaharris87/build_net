@@ -8,35 +8,60 @@ MODULE partf_module
   INTEGER            :: inuc_winv(max_nnet)
   CHARACTER(LEN=5)   :: nname_winv(max_nnet)
 
+  CHARACTER(LEN=256) :: netwinv_data_dir = './partf_data'
+
   INTEGER            :: lun_netwinv_in
 ! CHARACTER(LEN=14)  :: netwinv_in_fname   = 'winvne_JINAv21'
-  CHARACTER(LEN=14)  :: netwinv_in_fname   = 'winvne_JINAv20'
+! CHARACTER(LEN=11)  :: netwinv_in_fname   = 'winvn_jonas'
 ! CHARACTER(LEN=14)  :: netwinv_in_fname   = 'winvne_JINAv11'
-! CHARACTER(LEN=14)  :: netwinv_in_fname   = 'winvne_JINAv05'
+  CHARACTER(LEN=256) :: netwinv_in_fname   = 'winvne_JINAv05'
+! CHARACTER(LEN=256) :: netwinv_in_fmt1    = '(a5,f12.3,2i4,f6.1,f10.3)'
+! CHARACTER(LEN=256) :: netwinv_in_fmt2    = '(8f9.2)'
+  CHARACTER(LEN=256) :: netwinv_in_fmt1    = '(a5,f12.3,2i4,f6.1,f10.3,1x,a11)'
+  CHARACTER(LEN=256) :: netwinv_in_fmt2    = '(8es12.5)'
 
   INTEGER            :: lun_netwinv_out
-  CHARACTER(LEN=7)   :: netwinv_out_fname  = 'netwinv'
+  CHARACTER(LEN=256) :: netwinv_out_fname  = 'netwinv'
+! CHARACTER(LEN=256) :: netwinv_out_fmt1   = '(a5,f12.3,2i4,f6.1,f10.3)'
+! CHARACTER(LEN=256) :: netwinv_out_fmt2   = '(8f9.2)'
+  CHARACTER(LEN=256) :: netwinv_out_fmt1   = '(a5,f12.3,2i4,f6.1,f15.8)'
+  CHARACTER(LEN=256) :: netwinv_out_fmt2   = '(8es12.5)'
+
+  CHARACTER(LEN=256) :: mass_data_dir = './mass_data'
 
   INTEGER            :: lun_ame03
-  CHARACTER(LEN=14)  :: ame03_fname = 'mass_ame03.dat'
+  CHARACTER(LEN=256) :: ame03_fname = 'mass_ame03.dat'
 
   INTEGER            :: lun_ame03extrap
-  CHARACTER(LEN=20)  :: ame03extrap_fname = 'mass_ame03extrap.dat'
+  CHARACTER(LEN=256) :: ame03extrap_fname = 'mass_ame03extrap.dat'
 
   INTEGER            :: lun_ame11
-  CHARACTER(LEN=14)  :: ame11_fname = 'mass_ame11.dat'
+  CHARACTER(LEN=256) :: ame11_fname = 'mass_ame11.dat'
 
   INTEGER            :: lun_reac1
-  CHARACTER(LEN=14)  :: reac1_fname = 'mass_reac1.dat'
+  CHARACTER(LEN=256) :: reac1_fname = 'mass_reac1.dat'
 
   INTEGER            :: lun_ame11extrap
-  CHARACTER(LEN=20)  :: ame11extrap_fname = 'mass_ame11extrap.dat'
+  CHARACTER(LEN=256) :: ame11extrap_fname = 'mass_ame11extrap.dat'
 
   INTEGER            :: lun_frdm
-  CHARACTER(LEN=13)  :: frdm_fname = 'mass_frdm.dat'
+  CHARACTER(LEN=256) :: frdm_fname = 'mass_frdm.dat'
 
   INTEGER, PARAMETER :: max_iz = 136
   INTEGER, PARAMETER :: max_in = 236
+
+  namelist /partf_input/ &
+    netwinv_data_dir, &
+    netwinv_in_fname, &
+    mass_data_dir, &
+    ame03_fname, &
+    ame03extrap_fname, &
+    ame11_fname, &
+    ame11extrap_fname, &
+    reac1_fname, &
+    frdm_fname, &
+    netwinv_out_fname
+
 
   CONTAINS
 
@@ -59,7 +84,7 @@ MODULE partf_module
     REAL(8) :: frdm_mex(0:max_iz,0:max_in)
 
     INTEGER :: inuc, jnuc, knuc
-    INTEGER :: k, m
+    INTEGER :: k, m, ierr
 
     ! Read mass data
     CALL read_mass( lun_ame03, ame03_mex )
@@ -100,8 +125,8 @@ MODULE partf_module
     DO jnuc = 1, nnet
       knuc = inuc_winv(jnuc) - inuc + 1
       DO k = 1, knuc
-        READ(lun_netwinv_in,'(a5,f12.3,2i4,f6.1,f10.3,1x,a11)') nname_read,aa_read,iz_read,in_read,sp_read,mex_read,source_read
-        READ(lun_netwinv_in,'(8es12.5)') (g_read(m),m=1,24)
+        READ(lun_netwinv_in,netwinv_in_fmt1,IOSTAT=ierr) nname_read,aa_read,iz_read,in_read,sp_read,mex_read,source_read
+        READ(lun_netwinv_in,*) (g_read(m),m=1,24)
       END DO
 
       IF ( TRIM(ADJUSTL(source_read)) == 'ame11' ) THEN
@@ -123,10 +148,10 @@ MODULE partf_module
         WRITE(lun_netwinv_out,'(a5,f12.3,2i4,f6.1,f15.8)') &
         & nname_read,aa_read,iz_read,in_read,sp_read,frdm_mex(iz_read,in_read)
       ELSE
-        WRITE(lun_netwinv_out,'(a5,f12.3,2i4,f6.1,f15.8)') &
+        WRITE(lun_netwinv_out,netwinv_out_fmt1) &
         & nname_read,aa_read,iz_read,in_read,sp_read,mex_read
       END IF
-      WRITE(lun_netwinv_out,'(8es12.5)') (g_read(m),m=1,24)
+      WRITE(lun_netwinv_out,netwinv_out_fmt2) (g_read(m),m=1,24)
       inuc = inuc_winv(jnuc) + 1
     END DO
       

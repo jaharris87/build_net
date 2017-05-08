@@ -3,18 +3,26 @@ MODULE ffn_module
 
   INTEGER, PARAMETER :: max_nffn = 466
   INTEGER            :: nffn
-  LOGICAL            :: ffn_flag = .true.
+  LOGICAL            :: netweak_flag = .true.
 
   INTEGER            :: inuc_ffn(2,max_nffn)
   CHARACTER(LEN=5)   :: nname_ffn(2,max_nffn)
   CHARACTER(LEN=4)   :: desc_ffn = ' ffn'
   REAL(8)            :: q_ffn(max_nffn)
 
+  CHARACTER(LEN=256) :: netweak_data_dir   = './ffn_data'
+
   INTEGER            :: lun_netweak_in
-  CHARACTER(LEN=14)  :: netweak_in_fname   = 'lmpffnoda.data'
+  CHARACTER(LEN=256) :: netweak_in_fname   = 'lmpffnoda.data'
 
   INTEGER            :: lun_netweak_out
-  CHARACTER(LEN=7)   :: netweak_out_fname  = 'netweak'
+  CHARACTER(LEN=256) :: netweak_out_fname  = 'netweak'
+
+  namelist /ffn_input/ &
+    netweak_flag, &
+    netweak_data_dir, &
+    netweak_in_fname, &
+    netweak_out_fname
 
   CONTAINS
 
@@ -99,7 +107,7 @@ MODULE ffn_module
     LOGICAL :: keep_rate, is_sorted
 
     nffn = 0
-    IF ( .not. ffn_flag ) RETURN
+    IF ( .not. netweak_flag ) RETURN
 
     ! Extract rates needed by the new network
     DO
