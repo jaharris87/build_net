@@ -55,8 +55,8 @@ MODULE file_module
   END SUBROUTINE safe_open_new
 
   SUBROUTINE file_init
-    USE net_module, ONLY: lun_sunet, lun_netsu_in, lun_netsu_out, &
-    & sunet_fname, netsu_in_fname, netsu_out_fname, netsu_data_dir, net_input
+    USE net_module, ONLY: lun_sunet_in, lun_sunet_out, lun_netsu_in, lun_netsu_out, &
+    & sunet_fname, netsu_in_fname, netsu_out_fname, netsu_data_dir, net_input, reaclib_ver
     USE partf_module, ONLY: lun_netwinv_in, lun_netwinv_out, &
     & netwinv_in_fname, netwinv_out_fname, lun_ame11, lun_reac1, &
     & lun_ame11extrap, lun_frdm, lun_ame03, lun_ame03extrap, &
@@ -80,7 +80,7 @@ MODULE file_module
     CLOSE( lun_input )
 
     ! Open raw data files
-    CALL safe_open_old( lun_sunet, '.', sunet_fname, ierr )
+    CALL safe_open_old( lun_sunet_in, '.', sunet_fname, ierr )
     IF ( ierr /= 0 ) STOP
     
     CALL safe_open_old( lun_netsu_in, netsu_data_dir, netsu_in_fname, ierr )
@@ -118,6 +118,9 @@ MODULE file_module
     END IF
 
     ! Open output files for new network
+    CALL safe_open_new( lun_sunet_out, new_data_dir, 'sunet', ierr )
+    IF ( ierr /= 0 ) STOP
+
     CALL safe_open_new( lun_netsu_out, new_data_dir, netsu_out_fname, ierr )
     IF ( ierr /= 0 ) STOP
 
@@ -136,14 +139,15 @@ MODULE file_module
   END SUBROUTINE file_init
 
   SUBROUTINE file_finalize
-    USE net_module, ONLY: lun_sunet, lun_netsu_in, lun_netsu_out
+    USE net_module, ONLY: lun_sunet_in, lun_sunet_out, lun_netsu_in, lun_netsu_out
     USE partf_module, ONLY: lun_netwinv_in, lun_netwinv_out, lun_ame11, &
     & lun_reac1, lun_ame11extrap, lun_frdm, lun_ame03, lun_ame03extrap
     USE ffn_module, ONLY: lun_netweak_in, lun_netweak_out, netweak_flag
     USE nnu_module, ONLY: lun_netneutr_in, lun_netneutr_out, netneutr_flag
     IMPLICIT NONE
 
-    CLOSE( lun_sunet )
+    CLOSE( lun_sunet_in )
+    CLOSE( lun_sunet_out )
     CLOSE( lun_netsu_in )
     CLOSE( lun_netwinv_in )
     CLOSE( lun_ame03 )

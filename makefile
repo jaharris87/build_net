@@ -25,8 +25,8 @@ CMODE ?= OPTIMIZE
 ifeq ($(PE_ENV),GNU)
     #GNU
     F9X            ?= gfortran
-    FFLAGS_DEBUG    = -O0 -g -fbacktrace -fcheck=all -Wall
-    FFLAGS_OPTIMIZE = -O3 -march=native
+    FFLAGS_DEBUG    = -O0 -g -fbacktrace -fcheck=all -Wall -ffree-line-length-none
+    FFLAGS_OPTIMIZE = -O3 -march=native -ffree-line-length-none
 else ifeq ($(PE_ENV),PGI)
     #PGI
     F9X            ?= pgf90

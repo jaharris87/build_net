@@ -63,7 +63,7 @@ MODULE nnu_module
   END SUBROUTINE nnu_index_from_name
 
   SUBROUTINE write_nnu_rate( innu )
-    USE net_module, ONLY: write_net_rate
+    USE net_module, ONLY: write_net_rate, lun_netsu_out
     IMPLICIT NONE
 
     ! Input variables
@@ -87,7 +87,7 @@ MODULE nnu_module
       q          = q_nnu(innu)
       rc(1)      = DBLE( innu )
       rc(2:7)    = 0.0d0
-      CALL write_net_rate( k, nname, desc, rflag, wflag, q, rc )
+      CALL write_net_rate( lun_netsu_out, k, nname, desc, rflag, wflag, q, rc )
     END IF
 
     RETURN

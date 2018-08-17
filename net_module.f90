@@ -6,16 +6,20 @@ MODULE net_module
 
   CHARACTER(LEN=5)   :: nname_net(max_nnet)
 
-  INTEGER            :: lun_sunet
-  CHARACTER(LEN=5)   :: sunet_fname        = 'sunet'
+  INTEGER            :: lun_sunet_in
+  CHARACTER(LEN=256) :: sunet_fname        = 'sunet'
 
   CHARACTER(LEN=256) :: netsu_data_dir     = './reaclib_data'
 
   INTEGER            :: lun_netsu_in
+  CHARACTER(LEN=256) :: netsu_in_fname     = 'reaclib_JINAv22_ks02'
 ! CHARACTER(LEN=256) :: netsu_in_fname     = 'reaclib_JINAv21'
 ! CHARACTER(LEN=256) :: netsu_in_fname     = 'reaclib_jonas'
 ! CHARACTER(LEN=256) :: netsu_in_fname     = 'reaclib_JINAv11'
-  CHARACTER(LEN=256) :: netsu_in_fname     = 'reaclib_JINAv05'
+! CHARACTER(LEN=256) :: netsu_in_fname     = 'reaclib_JINAv05'
+  INTEGER            :: reaclib_ver        = 1
+
+  INTEGER            :: lun_sunet_out
 
   INTEGER            :: lun_netsu_out
   CHARACTER(LEN=5)   :: netsu_out_fname    = 'netsu'
@@ -24,6 +28,7 @@ MODULE net_module
     sunet_fname, &
     netsu_data_dir, &
     netsu_in_fname, &
+    reaclib_ver, &
     netsu_out_fname
 
   CONTAINS
@@ -151,10 +156,11 @@ MODULE net_module
     RETURN
   END SUBROUTINE net_index_from_name
 
-  SUBROUTINE write_net_rate( k, nname, desc, rflag, wflag, q, rc )
+  SUBROUTINE write_net_rate( lun_out, k, nname, desc, rflag, wflag, q, rc )
     IMPLICIT NONE
 
     ! Input variables
+    INTEGER, INTENT(IN) :: lun_out
     INTEGER, INTENT(IN) :: k
     CHARACTER(LEN=5), INTENT(IN) :: nname(6)
     CHARACTER(LEN=4), INTENT(IN) :: desc
@@ -164,8 +170,8 @@ MODULE net_module
     ! Local variables
     INTEGER :: jj
 
-    WRITE(lun_netsu_out,'(i1,4x,6a5,8x,a4,a1,a1,3x,1pe12.5)') k,(nname(jj),jj=1,6),desc,rflag,wflag,q
-    WRITE(lun_netsu_out,'(4e13.6)') (rc(jj),jj=1,7)
+    WRITE(lun_out,'(i1,4x,6a5,8x,a4,a1,a1,3x,1pe12.5)') k,(nname(jj),jj=1,6),desc,rflag,wflag,q
+    WRITE(lun_out,'(4e13.6)') (rc(jj),jj=1,7)
 
     RETURN
   END SUBROUTINE write_net_rate
@@ -178,7 +184,7 @@ MODULE net_module
 
     inuc = 1
     DO
-      READ(lun_sunet,'(a5)',IOSTAT=ierr) nname_net(inuc)
+      READ(lun_sunet_in,'(a5)',IOSTAT=ierr) nname_net(inuc)
       IF ( ierr /= 0 ) EXIT
       inuc = inuc + 1
       IF ( inuc > max_nnet ) THEN
@@ -192,5 +198,18 @@ MODULE net_module
 
     RETURN
   END SUBROUTINE read_sunet
+
+  SUBROUTINE write_sunet
+    IMPLICIT NONE
+
+    ! Local variables
+    INTEGER :: i, ierr
+
+    DO i = 1, nnet
+      WRITE(lun_sunet_out,'(a5)',IOSTAT=ierr) ADJUSTR(nname_net(i))
+    END DO
+
+    RETURN
+  END SUBROUTINE write_sunet
 
 END MODULE net_module
