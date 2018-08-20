@@ -35,7 +35,7 @@ PROGRAM reaclib_reader
   CONTAINS
 
   SUBROUTINE build_netsu
-    USE net_module, ONLY: nnet, net_index_from_name, write_net_rate, nname_net, lun_netsu_in, lun_netsu_out, reaclib_ver
+    USE net_module, ONLY: nnet, net_index_from_name, write_net_rate, nname_net, lun_netsu_in, lun_netsu_out, reaclib_ver, no910
     USE ffn_module, ONLY: nffn, ffn_index_from_name, write_ffn_rate
     USE nnu_module, ONLY: nnnu, nnu_index_from_name, write_nnu_rate
     IMPLICIT NONE
@@ -47,11 +47,18 @@ PROGRAM reaclib_reader
     CHARACTER(LEN=1) :: rflag_read, wflag_read
     REAL(8)          :: q_read,rc_read(7)
 
-    INTEGER :: krate, k1(8)
+    INTEGER, ALLOCATABLE :: k1(:)
+    INTEGER :: krate
     INTEGER :: inucw, iffn(2), innu(2)
     INTEGER :: i, j, inuc, jnuc, ierr, nrcn
 
-    k1 = (/2,3,4,3,4,5,6,5/)
+    IF ( no910 ) THEN
+      ALLOCATE(k1(8))
+      k1 = (/2,3,4,3,4,5,6,5/)
+    ELSE
+      ALLOCATE(k1(11))
+      k1 = (/2,3,4,3,4,5,6,4,5,6,5/)
+    ENDIF
     inucw = 0
     nrcn = 0
 
@@ -61,7 +68,7 @@ PROGRAM reaclib_reader
     IF ( reaclib_ver == 1 ) THEN
     
       ! Read the rate header
-      READ(lun_netsu_in,'(i1,4x,6a5,8x,a4,a1,a1,3x,1pe12.5)',IOSTAT=ierr) &
+      READ(lun_netsu_in,'(i2,3x,6a5,8x,a4,a1,a1,3x,1pe12.5)',IOSTAT=ierr) &
       &   k_read,(nname_read(j),j=1,6),desc_read,rflag_read,wflag_read,q_read
 
       ! This loop will end after each line in the database has been processed
@@ -73,7 +80,7 @@ PROGRAM reaclib_reader
 
         LOOP2: DO
           ! Read the rate header
-          READ(lun_netsu_in,'(i1,4x,6a5,8x,a4,a1,a1,3x,1pe12.5)',IOSTAT=ierr) &
+          READ(lun_netsu_in,'(i2,3x,6a5,8x,a4,a1,a1,3x,1pe12.5)',IOSTAT=ierr) &
           &   k_read,(nname_read(j),j=1,6),desc_read,rflag_read,wflag_read,q_read
           IF ( ierr /= 0 ) THEN
             EXIT LOOP1 ! Presumably, this should only happen at the end of the file
@@ -167,7 +174,7 @@ PROGRAM reaclib_reader
 
       krate = 1
       LOOP3: DO
-        READ(lun_netsu_in,'(i1)',IOSTAT=ierr) k_read
+        READ(lun_netsu_in,'(i2)',IOSTAT=ierr) k_read
         IF ( ierr /= 0 ) EXIT LOOP3
 
         ! k_read /= krate means we have read all the entries in the krate chapter

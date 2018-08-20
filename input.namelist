@@ -10,7 +10,9 @@
   sunet_fname = 'sunet'
 
   netsu_data_dir = './reaclib_data'
-  netsu_in_fname = 'reaclib_JINAv22'
+  netsu_in_fname = '20180621default'
+  reaclib_ver = 1
+  no910 = .true.
 
   netsu_out_fname = 'netsu'
 

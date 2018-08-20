@@ -56,7 +56,7 @@ MODULE file_module
 
   SUBROUTINE file_init
     USE net_module, ONLY: lun_sunet_in, lun_sunet_out, lun_netsu_in, lun_netsu_out, &
-    & sunet_fname, netsu_in_fname, netsu_out_fname, netsu_data_dir, net_input, reaclib_ver
+    & sunet_fname, netsu_in_fname, netsu_out_fname, netsu_data_dir, net_input, reaclib_ver, no910
     USE partf_module, ONLY: lun_netwinv_in, lun_netwinv_out, &
     & netwinv_in_fname, netwinv_out_fname, lun_ame11, lun_reac1, &
     & lun_ame11extrap, lun_frdm, lun_ame03, lun_ame03extrap, &

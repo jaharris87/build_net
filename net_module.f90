@@ -18,6 +18,7 @@ MODULE net_module
 ! CHARACTER(LEN=256) :: netsu_in_fname     = 'reaclib_JINAv11'
 ! CHARACTER(LEN=256) :: netsu_in_fname     = 'reaclib_JINAv05'
   INTEGER            :: reaclib_ver        = 1
+  LOGICAL            :: no910              = .true.
 
   INTEGER            :: lun_sunet_out
 
@@ -29,6 +30,7 @@ MODULE net_module
     netsu_data_dir, &
     netsu_in_fname, &
     reaclib_ver, &
+    no910, &
     netsu_out_fname
 
   CONTAINS
@@ -170,7 +172,11 @@ MODULE net_module
     ! Local variables
     INTEGER :: jj
 
-    WRITE(lun_out,'(i1,4x,6a5,8x,a4,a1,a1,3x,1pe12.5)') k,(nname(jj),jj=1,6),desc,rflag,wflag,q
+    IF ( k < 10 ) THEN
+      WRITE(lun_out,'(i1,4x,6a5,8x,a4,a1,a1,3x,1pe12.5)') k,(nname(jj),jj=1,6),desc,rflag,wflag,q
+    ELSE
+      WRITE(lun_out,'(i2,3x,6a5,8x,a4,a1,a1,3x,1pe12.5)') k,(nname(jj),jj=1,6),desc,rflag,wflag,q
+    END IF
     WRITE(lun_out,'(4e13.6)') (rc(jj),jj=1,7)
 
     RETURN
